@@ -2,7 +2,14 @@ import { NextRequest, NextResponse } from "next/server"
 import { redis } from "./lib/redis"
 import { nanoid } from "nanoid"
 
+const BOT_UA_PATTERN = /bot|crawler|spider|facebookexternalhit|whatsapp|twitterbot|telegrambot|slackbot|linkedinbot|discordbot|preview|prerender/i
+
 export default async function proxy(req: NextRequest) {
+    const userAgent = req.headers.get('user-agent') || ''
+    if (BOT_UA_PATTERN.test(userAgent)) {
+        return NextResponse.next()
+    }
+
     const pathname = req.nextUrl.pathname
 
     const roomMatch = pathname.match(/^\/room\/([^/]+)$/)
