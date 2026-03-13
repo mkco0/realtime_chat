@@ -104,7 +104,7 @@ export default function Page()  {
     }
 
     return (
-        <main className="flex flex-col h-screen max-h-screen overflow-hidden">
+        <main className="flex flex-col h-dvh overflow-hidden">
             <header className="border-b border-zinc-800 p-4 flex items-center justify-between bg-zinc-900/30">
                 <div className="flex items-center gap-4 min-w-0">
                     <div className="flex flex-col min-w-0">
