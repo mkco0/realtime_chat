@@ -26,6 +26,7 @@ export default function Page()  {
 
     const [copyStatus, setCopyStatus] = useState("COPY")
     const [timeRemaining, setTimeRemaining] = useState<number | null>(null)
+    const [confirmDestroy, setConfirmDestroy] = useState(false)
 
     const { data: ttlData } = useQuery({
         queryKey: ["ttl", roomId],
@@ -105,27 +106,41 @@ export default function Page()  {
     return (
         <main className="flex flex-col h-screen max-h-screen overflow-hidden">
             <header className="border-b border-zinc-800 p-4 flex items-center justify-between bg-zinc-900/30">
-                <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
+                <div className="flex items-center gap-4 min-w-0">
+                    <div className="flex flex-col min-w-0">
                         <span className="text-xs text-zinc-500 uppercase">Room ID</span>
                         <div className="flex items-center gap-2">
-                            <span className="font-bold text-green-500">{roomId}</span>
-                            <button onClick={copyLink} className="text-[10px] bg-zinc-800 hover:bg-zinc-700 px-2 py-0.5 rounded text-zinc-400 hover:text-zinc-200 transition-colors">{copyStatus}</button>
+                            <span className="font-bold text-green-500 truncate max-w-[120px] sm:max-w-none">{roomId}</span>
+                            <button onClick={copyLink} className="text-[10px] bg-zinc-800 hover:bg-zinc-700 px-2 py-0.5 rounded text-zinc-400 hover:text-zinc-200 transition-colors shrink-0">{copyStatus}</button>
                         </div>
                     </div>
 
-                    <div className="h-8 w-px bg-zinc-800" />
+                    <div className="h-8 w-px bg-zinc-800 shrink-0" />
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col shrink-0">
                         <span className="text-xs text-zinc-500 uppercase">Self-Destruct</span>
                         <span className={`text-sm font-bold flex items-center gap-2 ${timeRemaining !== null && timeRemaining < 60 ? "text-red-500" : "text-amber-500"}`}>{timeRemaining !== null ? formatTimeRemaining(timeRemaining) : "--:--"}</span>
                     </div>
                 </div>
 
-                <button onClick={() => destroyRoom()} className="text-xs bg-zinc-800 hover:bg-red-600 px-3 py-1.5 rounded text-zinc-400 hover:text-white font-bold transition-all group flex items-center gap-2 disabled:opacity-50">
-                    <span className="group-hover:animate-pulse">💣</span>
-                    DESTROY NOW
-                </button>
+                {confirmDestroy ? (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <button onClick={() => destroyRoom()} className="text-[10px] bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-white font-bold transition-colors">CONFIRM</button>
+                        <button onClick={() => setConfirmDestroy(false)} className="text-[10px] bg-zinc-800 hover:bg-zinc-700 px-2 py-1 rounded text-zinc-400 hover:text-zinc-200 font-bold transition-colors">CANCEL</button>
+                    </div>
+                ) : (
+                    <>
+                        {/* Mobile: compact emoji-only button */}
+                        <button onClick={() => setConfirmDestroy(true)} className="sm:hidden text-[10px] bg-zinc-800 hover:bg-red-600 px-2 py-1 rounded text-zinc-400 hover:text-white font-bold transition-all shrink-0">
+                            💣
+                        </button>
+                        {/* md+: full button */}
+                        <button onClick={() => setConfirmDestroy(true)} className="hidden sm:flex text-xs bg-zinc-800 hover:bg-red-600 px-3 py-1.5 rounded text-zinc-400 hover:text-white font-bold transition-all group items-center gap-2 disabled:opacity-50 shrink-0">
+                            <span className="group-hover:animate-pulse">💣</span>
+                            DESTROY NOW
+                        </button>
+                    </>
+                )}
             </header>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
